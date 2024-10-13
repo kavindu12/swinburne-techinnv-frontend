@@ -1,0 +1,15 @@
+[[redirects]]
+  from = "/records"
+  to = "http://174.129.115.81:5001/records"
+  status = 200
+
+[[redirects]]
+  from = "/predict"
+  to = "http://174.129.115.81:5001/predict"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
