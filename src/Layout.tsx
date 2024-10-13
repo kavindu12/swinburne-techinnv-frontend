@@ -66,7 +66,7 @@ export const sessionManager = {
     );
   },
   login: (username: string, password: string) => {
-    const current = JSON.parse(localStorage.getItem("tip_session") || "");
+    const current = JSON.parse(localStorage.getItem("tip_session") || "{}");
 
     if (current?.isLoggedIn) {
       return {
