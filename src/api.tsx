@@ -1,3 +1,6 @@
+import { atom, useAtom, useSetAtom } from "jotai";
+import { useEffect } from "react";
+
 const HOST = process.env.NODE_ENV === "development" ? "http://174.129.115.81:5001/" : "";
 
 export const predictedClassLabels: Record<string, string> = {
@@ -8,6 +11,15 @@ export const predictedClassLabels: Record<string, string> = {
   "4": "DoS attack",
   "5": "Infilteration",
   "6": "Web attack",
+};
+
+export const predictedClassesList = Object.keys(predictedClassLabels);
+
+type Result = {
+  predicted_class: "0" | "1" | "2" | "3" | "4" | "5" | "6";
+  timestamp: string;
+  id: string;
+  filename: string;
 };
 
 export async function getPrediction(input: any, filename?: string) {
@@ -25,7 +37,7 @@ export async function getPrediction(input: any, filename?: string) {
   }).then((res: Response) => res.json());
 }
 
-export async function getResults() {
+export const getResults = async (): Promise<Result[]> => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
@@ -34,4 +46,24 @@ export async function getResults() {
     mode: "cors",
     headers: myHeaders,
   }).then((res: Response) => res.json());
+};
+
+export const recordsAtom = atom<Result[]>([]);
+
+export const useRecords = () => {
+  const [records] = useAtom(recordsAtom);
+  return [records];
+};
+
+export function DataRefresher() {
+  const setRecords = useSetAtom(recordsAtom);
+
+  useEffect(() => {
+    setInterval(async () => {
+      const data = await getResults();
+      setRecords(data);
+    }, 5000);
+  }, []);
+
+  return null;
 }

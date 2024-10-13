@@ -11,6 +11,9 @@ export function SystemAnalysis() {
 
   return (
     <>
+      <Typography variant="h5" mb="1rem" fontWeight="bold">
+        Analyse raw entry
+      </Typography>
       <Grid container rowGap={2}>
         <Grid size={12}>
           <TextField
@@ -26,6 +29,7 @@ export function SystemAnalysis() {
         </Grid>
         <Grid size={12}>
           <Button
+            sx={{ mb: "1rem" }}
             variant="contained"
             onClick={async () => {
               try {
@@ -42,6 +46,14 @@ export function SystemAnalysis() {
           >
             Analyze
           </Button>
+          <Typography variant="caption" display="block" lineHeight="1">
+            Try this example:
+            <pre>
+              <code>
+                [[0.5,1.2,3.3,4.1,2.9,1,0.8,1.3,0.7,2.1,3,0.6,1.7,2.3,3.4,1.8,0.9,2.2,5.4,1.5,2.8,0.3,1.6,2,0.2,3.2,1.9,0.1,1.4,2.6,0,1.1,11.7]]
+              </code>
+            </pre>
+          </Typography>
         </Grid>
       </Grid>
       <br />

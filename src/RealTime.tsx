@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Typography } from "@mui/material";
+import { Box, Button, Divider, FormControlLabel, Switch, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useAtom, atom, useSetAtom } from "jotai";
 import { getPrediction } from "./api";
@@ -7,45 +7,50 @@ import { csv as dataset } from "./inputs";
 
 const timerAtom = atom(-1);
 const runningAtom = atom(false);
+const predictionAtom = atom(null);
+const speedupAtom = atom(false);
 
-function Fetcher(props: any) {
-  const [prediction, setPrediction] = useState<any>(null);
-  const [error, setError] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        const prediction = await getPrediction(props.row, "");
-        setPrediction(prediction);
-      } catch (e) {
-        setError(e);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [props.row]);
-
-  return <Result prediction={prediction} error={error} loading={loading} />;
-}
-
-function Executor() {
+export function Simulation() {
   const [nextTick, setNextTick] = useAtom(timerAtom);
   const [running] = useAtom(runningAtom);
+  const setPrediction = useSetAtom(predictionAtom);
+  const [speedup] = useAtom(speedupAtom);
+
+  const DELAY = speedup ? 0 : 2;
+  const SPEED = speedup ? 0.2 : 1.5;
 
   useEffect(() => {
-    if (nextTick > 0) {
+    if (running && nextTick > 0) {
       const i = setTimeout(
         () => {
-          setNextTick(Math.random() * 5 + 2);
+          setNextTick(Math.random() * 5 + DELAY);
         },
-        nextTick * 1.5 * 1000,
+        nextTick * SPEED * 1000,
       );
 
       return () => clearTimeout(i);
     }
-  }, [nextTick]);
+  }, [running, nextTick]);
+
+  const pos = nextTick > 0 ? Math.floor(Math.random() * dataset.length) : -1;
+  const row = dataset[pos];
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const prediction = await getPrediction(row, "ON_DEMAND");
+        setPrediction(prediction);
+      } catch (e) {}
+    })();
+  }, [row]);
+
+  return null;
+}
+
+function Executor() {
+  const [nextTick] = useAtom(timerAtom);
+  const [running] = useAtom(runningAtom);
+  const [prediction] = useAtom(predictionAtom);
 
   const pos = nextTick > 0 ? Math.floor(Math.random() * dataset.length) : -1;
   const row = dataset[pos];
@@ -79,7 +84,7 @@ function Executor() {
         <Typography variant="h4">
           <strong>Prediction</strong>
         </Typography>
-        <Fetcher row={row} />
+        <Result prediction={prediction} error={null} loading={false} />
       </>
     </>
   );
@@ -88,11 +93,14 @@ function Executor() {
 export function Realtime() {
   const setTimer = useSetAtom(timerAtom);
   const [running, setRunning] = useAtom(runningAtom);
+  const [speedup, setSpeedup] = useAtom(speedupAtom);
 
   return (
     <>
-      <Typography variant="h4">Realtime Attack Prediction</Typography>
-      <Typography variant="h5">(Simulation only)</Typography>
+      <Typography variant="h5" fontWeight="bold">
+        Realtime Attack Prediction
+      </Typography>
+      <Typography variant="h6">(Simulation only)</Typography>
       <br />
       <Button
         variant="contained"
@@ -105,6 +113,11 @@ export function Realtime() {
       >
         {running ? "Stop Simulation" : "Start Simulation"}
       </Button>
+      <FormControlLabel
+        sx={{ ml: "1rem" }}
+        control={<Switch checked={speedup} onChange={(e) => setSpeedup(e.target.checked)} />}
+        label="Speedup simulation"
+      />
       <Box mb="1rem" width="100%" />
       <Divider />
       <br />

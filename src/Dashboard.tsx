@@ -1,10 +1,10 @@
 import { BarChart } from "@mui/x-charts/BarChart";
 import { PieChart } from "@mui/x-charts/PieChart";
 import { useEffect, useState } from "react";
-import { getResults, predictedClassLabels } from "./api";
-import { Box, CircularProgress } from "@mui/material";
+import { getResults, predictedClassLabels, useRecords } from "./api";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { groupBy, map } from "lodash-es";
-import { AlertCountInLastXMinutes } from "./Highcharts";
+import { AlertCountInLastXMinutes, lastXMinutes } from "./GaugeCharts";
 
 function TimeSeries() {
   return (
@@ -24,9 +24,9 @@ function TimeSeries() {
 }
 
 type SourceItem = {
-  filename: string | null;
-  id: number;
-  predicted_class: number;
+  filename: string;
+  id: string;
+  predicted_class: string;
   timestamp: string;
 };
 
@@ -51,42 +51,11 @@ function convertDataForOverallChart(source: SourceItem[]): ResultItem[] {
 }
 
 function Overall(props: any) {
-  const { data } = props;
+  const [data] = useRecords();
 
   const rows = convertDataForOverallChart(data);
 
-  return (
-    <PieChart
-      series={[
-        {
-          data: rows,
-        },
-      ]}
-      width={400}
-      height={200}
-    />
-  );
-}
-
-export function Dashboard() {
-  const [data, setData] = useState<any>([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        const data = await getResults();
-        setData(data);
-      } catch (e) {
-        //
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
-
-  if (loading) {
+  if (!rows.length) {
     return (
       <Box sx={{ display: "flex", flexDirection: "column" }}>
         <div>Loading data...</div>
@@ -97,10 +66,36 @@ export function Dashboard() {
   }
 
   return (
+    <PieChart
+      series={[
+        {
+          data: rows || [],
+        },
+      ]}
+      width={400}
+      height={200}
+    />
+  );
+}
+
+const GAUGE_TIME = 2;
+
+export function Dashboard() {
+  return (
     <>
-      {/* <TimeSeries></TimeSeries> */}
-      <Overall data={data}></Overall>
-      <AlertCountInLastXMinutes />
+      <Typography variant="h5" mb="1rem" fontWeight="bold">
+        All time Attack distribution
+      </Typography>
+      <Overall />
+      <br />
+      <Box mb="2rem" width="100%" />
+      <Typography variant="h5" fontWeight="bold">
+        Attack count by category
+      </Typography>
+      <Typography variant="h6" mb="1rem">
+        In last {GAUGE_TIME} minutes
+      </Typography>
+      <AlertCountInLastXMinutes relative={lastXMinutes(GAUGE_TIME)} />
     </>
   );
 }

@@ -4,8 +4,9 @@ import { createBrowserRouter, RouterProvider, createRoutesFromElements, Route, O
 import { Dashboard } from "./Dashboard";
 import { SystemAnalysis } from "./SystemAnalysis";
 import Predictions from "./Predictions";
-import { Realtime } from "./RealTime";
+import { Realtime, Simulation } from "./RealTime";
 import SignIn from "./Signin";
+import { DataRefresher } from "./api";
 
 function UnderConstruction() {
   return "This page is under construction";
@@ -33,6 +34,8 @@ export default function App() {
   return (
     <>
       <RouterProvider router={router} />
+      <DataRefresher />
+      <Simulation />
     </>
   );
 }
