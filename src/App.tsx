@@ -7,10 +7,7 @@ import Predictions from "./Predictions";
 import { Realtime, Simulation } from "./RealTime";
 import SignIn from "./Signin";
 import { DataRefresher } from "./api";
-
-function UnderConstruction() {
-  return "This page is under construction";
-}
+import { Alerts } from "./Alerts";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -18,7 +15,7 @@ const router = createBrowserRouter(
       <Route path="/login" element={<SignIn />}></Route>
       <Route path="/" element={<Layout />}>
         <Route path="/" element={<Dashboard />}></Route>
-        <Route path="/alerts" element={<UnderConstruction />}></Route>
+        <Route path="/alerts" element={<Alerts />}></Route>
         <Route path="/analysis" element={<SystemAnalysis />}></Route>
         <Route path="/realtime" element={<Realtime />}></Route>
         <Route path="/predictions" element={<Predictions />}></Route>

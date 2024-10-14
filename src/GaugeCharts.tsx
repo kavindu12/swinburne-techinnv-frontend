@@ -10,7 +10,7 @@ import { groupBy } from "lodash-es";
 ChartModuleMore(Highcharts);
 HCSoldGauge(Highcharts);
 
-const marks = [0, 20, 30, 50];
+export const marks = [0, 20, 30, 50];
 
 const getOptions = (val = 0, title = ""): Highcharts.Options => ({
   chart: {
