@@ -19,7 +19,11 @@ import FileUploadIcon from "@mui/icons-material/FileUpload";
 import HistoryIcon from "@mui/icons-material/History";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate, Outlet, useMatches } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
+import { lastXMinutes, marks } from "./GaugeCharts";
+import { predictedClassesList, useRecords } from "./api";
+import { groupBy } from "lodash-es";
+import { Badge } from "@mui/material";
 
 const drawerWidth = 240;
 
@@ -47,7 +51,16 @@ function ListItemWithIcon(props: any) {
           go(props.path);
         }}
       >
-        <ListItemIcon>{props.icon}</ListItemIcon>
+        <ListItemIcon>
+          {props.hasAlerts ? (
+            <Badge badgeContent="!" color="error" variant="dot">
+              {props.icon}
+            </Badge>
+          ) : (
+            props.icon
+          )}
+        </ListItemIcon>
+
         <ListItemText primary={props.text} />
       </ListItemButton>
     </ListItem>
@@ -122,6 +135,19 @@ export default function Layout(props: React.PropsWithChildren) {
   const go = useNavigate();
   const matches = useMatches();
 
+  const relative = lastXMinutes(2);
+  const [records] = useRecords();
+
+  const hasAlerts = useMemo(() => {
+    const filtered = records.filter((d: any) => {
+      return new Date().getTime() - new Date(d.timestamp).getTime() < relative;
+    });
+    const byGroups = groupBy(filtered, "predicted_class");
+    return predictedClassesList.some((p) => {
+      return byGroups[p]?.length > marks[1];
+    });
+  }, [records]);
+
   const isLoginPage = matches[2].pathname.startsWith("/login");
 
   useEffect(() => {
@@ -160,7 +186,13 @@ export default function Layout(props: React.PropsWithChildren) {
         <Divider />
         <List>
           <ListItemWithIcon path="/" text="Dashboard" icon={<DashboardIcon />} roles={["admin", "user"]} />
-          <ListItemWithIcon path="/alerts" text="Alerts" icon={<NotificationsIcon />} roles={["admin"]} />
+          <ListItemWithIcon
+            path="/alerts"
+            text="Alerts"
+            icon={<NotificationsIcon />}
+            roles={["admin"]}
+            hasAlerts={hasAlerts}
+          />
           <ListItemWithIcon path="/analysis" text="System Analysis" icon={<GasMeterIcon />} roles={["admin", "user"]} />
           <ListItemWithIcon path="/realtime" text="Realtime Analysis" icon={<Timer />} roles={["admin"]} />
           <ListItemWithIcon
