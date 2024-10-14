@@ -35,7 +35,7 @@ export function SystemAnalysis() {
               try {
                 setError(null);
                 setLoading(true);
-                const p = await getPrediction(JSON.parse(value), "");
+                const p = await getPrediction(JSON.parse(value), "MANUAL_ENTRY");
                 setPrediction(p);
               } catch (e) {
                 setError(e);

@@ -23,8 +23,6 @@ const router = createBrowserRouter(
         <Route path="/realtime" element={<Realtime />}></Route>
         <Route path="/predictions" element={<Predictions />}></Route>
         <Route path="/upload" element={<FileUpload />}></Route>
-        <Route path="/users" element={<UnderConstruction />}></Route>
-        <Route path="/settings" element={<UnderConstruction />}></Route>
       </Route>
     </Route>,
   ),

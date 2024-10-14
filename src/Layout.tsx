@@ -17,8 +17,6 @@ import GasMeterIcon from "@mui/icons-material/GasMeter";
 import Timer from "@mui/icons-material/MoreTime";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
 import HistoryIcon from "@mui/icons-material/History";
-import PersonIcon from "@mui/icons-material/Person";
-import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useNavigate, Outlet, useMatches } from "react-router-dom";
 import { useEffect } from "react";
@@ -80,7 +78,7 @@ export const sessionManager = {
         JSON.stringify({
           isLoggedIn: true,
           role: "admin",
-          username: "admin",
+          username,
         }),
       );
       return {

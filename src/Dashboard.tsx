@@ -1,7 +1,6 @@
 import { BarChart } from "@mui/x-charts/BarChart";
 import { PieChart } from "@mui/x-charts/PieChart";
-import { useEffect, useState } from "react";
-import { getResults, predictedClassLabels, useRecords } from "./api";
+import { predictedClassLabels, useRecords } from "./api";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { groupBy, map } from "lodash-es";
 import { AlertCountInLastXMinutes, lastXMinutes } from "./GaugeCharts";
@@ -78,7 +77,7 @@ function Overall(props: any) {
   );
 }
 
-const GAUGE_TIME = 2;
+const GAUGE_TIME = 2; // 2 minutes
 
 export function Dashboard() {
   return (

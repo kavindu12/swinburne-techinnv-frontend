@@ -34,6 +34,7 @@ export default function DGrid() {
       try {
         setLoading(true);
         const data = await getResults();
+        data.reverse();
         setData(data);
       } catch (e) {
         //

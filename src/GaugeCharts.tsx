@@ -3,7 +3,7 @@ import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import ChartModuleMore from "highcharts/highcharts-more.js";
 import HCSoldGauge from "highcharts/modules/solid-gauge";
-import { Grid2 as Grid, Step } from "@mui/material";
+import { Grid2 as Grid } from "@mui/material";
 import { predictedClassesList, predictedClassLabels, useRecords } from "./api";
 import { groupBy } from "lodash-es";
 
@@ -122,7 +122,6 @@ export function AlertCountInLastXMinutes(props: any) {
     const filtered = records.filter((d: any) => {
       return new Date().getTime() - new Date(d.timestamp).getTime() < relative;
     });
-    console.log(filtered);
     return groupBy(filtered, "predicted_class");
   }, [records]);
 

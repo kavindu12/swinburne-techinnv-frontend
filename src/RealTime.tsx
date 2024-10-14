@@ -36,13 +36,15 @@ export function Simulation() {
   const row = dataset[pos];
 
   useEffect(() => {
-    (async () => {
-      try {
-        const prediction = await getPrediction(row, "ON_DEMAND");
-        setPrediction(prediction);
-      } catch (e) {}
-    })();
-  }, [row]);
+    if (running && row) {
+      (async () => {
+        try {
+          const prediction = await getPrediction(row, "ON_DEMAND");
+          setPrediction(prediction);
+        } catch (e) {}
+      })();
+    }
+  }, [running, row]);
 
   return null;
 }
